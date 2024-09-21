@@ -28,20 +28,29 @@ export default function App() {
     const [showAddFriend, setShowAddFriend] = useState(false);
 
     function handelIsOpenAddForm() {
-        setShowAddFriend(showAdd=>!showAdd)
+        setShowAddFriend(showAdd => !showAdd);
+    }
+
+    const [friendList, setFriendsList] = useState(initialFriends)
+
+    function handelAddFriend(newFriend) {
+        setFriendsList(() => [...friendList, newFriend]);
+        handelIsOpenAddForm()
+
+
     }
 
 
     return (
         <div className='app'>
             <div className='sidebar'>
-                <FriendsList/>
+                <FriendsList friendsList={friendList}/>
                 {
-                    (showAddFriend) && (<FormAddFriend/>)
+                    (showAddFriend) && (<FormAddFriend onAddFriend={handelAddFriend}/>)
                 }
                 <Button
                     onClick={handelIsOpenAddForm}
-                >{!showAddFriend ? 'Add Friend':'Close'}
+                >{!showAddFriend ? 'Add Friend' : 'Close'}
                 </Button>
             </div>
             <FormSpilitBill/>
@@ -49,12 +58,11 @@ export default function App() {
     );
 };
 
-function FriendsList() {
-    const friends = initialFriends;
+function FriendsList({friendsList}) {
     return (
         <ul>
             {
-                friends.map(el => <Friend friendItem={el} key={el.id}/>)
+                friendsList.map(el => <Friend friendItem={el} key={el.id}/>)
             }
         </ul>
     )
@@ -85,21 +93,69 @@ function Friend({friendItem}) {
 
         </li>
     )
+
 }
 
-function FormAddFriend() {
+function FormAddFriend({onAddFriend}) {
+    const [name, setName] = useState('');
+    // const [image, setImage] = useState('https://ui-avatars.com/api/?name=');
+
+    function handelFriendName(name) {
+        setName(name);
+    }
+
+    // function handelFriendImage(name) {
+    //     setImage('https://ui-avatars.com/api/?name='.concat(name))
+    // }
+
+    function handelSubmit(e) {
+        e.preventDefault();
+        if (!name) return null;
+
+        const newFriend = {
+            id: crypto.randomUUID(),
+            name,
+            image:'https://ui-avatars.com/api/?name='.concat(name),
+            balance: 0
+        };
+
+        onAddFriend(newFriend)
+        setName('');
+        // setImage('https://ui-avatars.com/api/?name=')
+
+    }
+
     return (
-        <form className='form-add-friend'>
+        <form
+            className='form-add-friend'
+            onSubmit={handelSubmit}
+        >
             <label>Friend Name</label>
-            <input placeholder={'Name'} type={'text'}/>
-            <label>📷 Image URL</label>
-            <input placeholder={'URL'} type={'text'}/>
+            <input
+                placeholder={'Name'}
+                type={'text'}
+                value={name}
+                onChange={event => {
+                    handelFriendName(event.target.value)
+                    // handelFriendImage(event.target.value)
+                }
+
+                }
+
+            />
+            {/*<label>📷 Image URL</label>*/}
+            {/*<input*/}
+            {/*    placeholder={'URL'}*/}
+            {/*    type={'text'}*/}
+            {/*    value={image}*/}
+            {/*    onChange={event => handelFriendImage(event.target.value)}*/}
+            {/*/>*/}
             <Button>Add</Button>
         </form>
     )
 }
 
-function Button({children,onClick}) {
+function Button({children, onClick}) {
     return (
         <button onClick={onClick} className={'button'}>{children}</button>
     )
