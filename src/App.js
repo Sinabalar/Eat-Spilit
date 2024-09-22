@@ -184,27 +184,71 @@ function FormAddFriend({onAddFriend}) {
     )
 }
 
-function Button({children, onClick}) {
-    return (
-        <button onClick={onClick} className={'button'}>{children}</button>
-    )
-}
+function FormSpilitBill({selectedFriend}) {
+
+    const [bill, setBill] = useState(null);
+
+    function handelBill(billVal) {
+        if (isNaN(billVal)) return null;
+        setBill(billVal)
+    }
+
+    const [paidByUserVal, setPaidByUserVal] = useState('');
+
+    function handelPaidByUserVal(paidVal) {
+        if (isNaN(paidVal)) return null;
+
+        setPaidByUserVal((curVal) => paidVal > bill ? curVal : paidVal)
+    }
+
+    const [whoIsPaying, setWhoIsPaying] = useState('user');
+    const paidByfriend = bill ? bill - paidByUserVal : ''
+
+    function handelSplitBill(e) {
+        e.preventDefault();
+
+    }
 
     return (
-        <form className={'form-split-bill'}>
+        <form
+            className={'form-split-bill'}
+            onSubmit={handelSplitBill}
+        >
             <h2>Split a bill with {selectedFriend.name}</h2>
 
 
             <label>💰 Bill value</label>
-            <input placeholder={'$'} type={'text'}/>
+            <input
+                placeholder={'$'}
+                type={'text'}
+                value={bill}
+                onChange={(event) => handelBill(Number(event.target.value))}
+            />
+
+
             <label>Your expense</label>
-            <input type={'text'}/>
-            <label>X's expense</label>
-            <input type={'text'} disabled/>
+            <input
+                type={'text'}
+                value={paidByUserVal}
+                onChange={(event) => handelPaidByUserVal(Number(event.target.value))}
+            />
+
+
+            <label>{selectedFriend.name}'s expense</label>
+            <input
+                type={'text'}
+                disabled
+                value={paidByfriend}
+            />
+
+
             <label>🤔 Who is paying the bill ?</label>
-            <select>
+            <select
+                value={whoIsPaying}
+                onChange={(event => setWhoIsPaying(event.target.value))}
+            >
                 <option value={'user'}>Me</option>
-                <option value={'friend'}>X</option>
+                <option value={'friend'}>{selectedFriend.name}</option>
             </select>
 
 
