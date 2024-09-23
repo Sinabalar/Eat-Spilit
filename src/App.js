@@ -53,6 +53,17 @@ export default function App() {
         setShowAddFriend(false);
     }
 
+    function handelSplit(value) {
+        setFriendsList((friendList) =>
+            friendList.map((el) =>
+                el.id === selectedFriend?.id
+                    ? {...el, balance: el.balance + value}
+                    : el
+            ));
+        setSelectedFriend(null)
+
+    }
+
 
     return (
         <div className='app'>
@@ -72,8 +83,9 @@ export default function App() {
             </div>
             {
                 selectedFriend &&
-                <FormSpilitBill
+                <FormSplitBill
                     selectedFriend={selectedFriend}
+                    onSplit={handelSplit}
                 />
 
             }
@@ -85,8 +97,13 @@ function FriendsList({friendsList, handelSelectFriend, selectedFriend}) {
     return (
         <ul>
             {
-                friendsList.map(el => <Friend friendItem={el} key={el.id} onSelectFriend={handelSelectFriend}
-                                              selectedFriend={selectedFriend}/>)
+                friendsList.map(el =>
+                    <Friend
+                        friendItem={el}
+                        key={el.id}
+                        onSelectFriend={handelSelectFriend}
+                        selectedFriend={selectedFriend}
+                    />)
             }
         </ul>
     )
@@ -184,9 +201,9 @@ function FormAddFriend({onAddFriend}) {
     )
 }
 
-function FormSpilitBill({selectedFriend}) {
+function FormSplitBill({selectedFriend, onSplit}) {
 
-    const [bill, setBill] = useState(null);
+    const [bill, setBill] = useState('');
 
     function handelBill(billVal) {
         if (isNaN(billVal)) return null;
@@ -198,21 +215,30 @@ function FormSpilitBill({selectedFriend}) {
     function handelPaidByUserVal(paidVal) {
         if (isNaN(paidVal)) return null;
 
-        setPaidByUserVal((curVal) => paidVal > bill ? curVal : paidVal)
+        setPaidByUserVal((curVal) =>
+            paidVal > bill ? curVal : paidVal)
     }
 
     const [whoIsPaying, setWhoIsPaying] = useState('user');
-    const paidByfriend = bill ? bill - paidByUserVal : ''
+    const paidByFriend = bill ? bill - paidByUserVal : ''
 
-    function handelSplitBill(e) {
+    function handelSplitBillForm(e) {
         e.preventDefault();
+
+        if ((!bill) || (!paidByUserVal)) return null;
+        onSplit((
+            whoIsPaying === 'user'
+                ? paidByFriend
+                : -paidByUserVal
+        ));
+
 
     }
 
     return (
         <form
             className={'form-split-bill'}
-            onSubmit={handelSplitBill}
+            onSubmit={handelSplitBillForm}
         >
             <h2>Split a bill with {selectedFriend.name}</h2>
 
@@ -238,7 +264,7 @@ function FormSpilitBill({selectedFriend}) {
             <input
                 type={'text'}
                 disabled
-                value={paidByfriend}
+                value={paidByFriend}
             />
 
 
