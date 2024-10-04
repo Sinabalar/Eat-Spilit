@@ -1,16 +1,16 @@
 import Button from "./Button";
 import {useState} from "react";
 
-export default function FormSpilitBill({selectedFriend, onSplitBill, afterSplitBill}) {
+export default function FormSplitBill({selectedFriend, onSplitBill, afterSplitBill}) {
 
-    const [bill, setBill] = useState(0);
+    const [bill, setBill] = useState('');
 
     function handelBill(bilVal) {
         if (isNaN(bilVal)) return null;
         setBill(() => bilVal);
     }
 
-    const [userPaid, setUserPaid] = useState(0);
+    const [userPaid, setUserPaid] = useState('');
 
     function handelUserPaid(paidVal) {
         if (isNaN(paidVal) || paidVal > bill) return null;

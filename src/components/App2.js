@@ -2,7 +2,7 @@ import style from "./index.css"
 import FormAddFriend from "./FormAddFriend"
 import FriendsList from "./FriendsList"
 import Button from "./Button";
-import FormSplitBill from "./FormSpilitBill";
+import FormSplitBill from "./FormSplitBill";
 import {useState} from "react";
 import initialFriends from "./Data";
 
@@ -67,6 +67,7 @@ export default function App2() {
                     selectedFriend={selectedFriend}
                     onSplitBill={handelSplitBill}
                     afterSplitBill={handelSelectedFriend}
+                    key={selectedFriend.id}
 
                 />)
             }

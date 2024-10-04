@@ -1,6 +1,6 @@
 import Friend from "./Friend";
 
-export default function FriendsList({list, handelSelectedFriend, selectedFriend}) {
+export default function FriendsList({ list, handelSelectedFriend, selectedFriend }) {
     return (
         <ul>
             {
